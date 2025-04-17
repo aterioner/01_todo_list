@@ -62,10 +62,11 @@
   
   const tasks = ref([])
   const newTaskTitle = ref('')
+  // const API = 'https://todo-backend-4ycu.onrender.com'
   
   // Načtení úkolů při načtení komponenty
   onMounted(async () => {
-    const response = await axios.get('/api/tasks/')
+    const response = await axios.get('https://todo-backend-4ycu.onrender.com/api/tasks/')
     tasks.value = response.data
   })
   
@@ -74,7 +75,7 @@
     const trimmed = newTaskTitle.value.trim()
     if (!trimmed) return
   
-    const response = await axios.post('/api/tasks/', {
+    const response = await axios.post('https://todo-backend-4ycu.onrender.com/api/tasks/', {
       title: trimmed,
       completed: false,
     })
@@ -84,12 +85,12 @@
   
   // Aktualizace úkolu (např. checkbox)
   const updateTask = async (task) => {
-    await axios.put(`/api/tasks/${task.id}/`, task)
+    await axios.put(`https://todo-backend-4ycu.onrender.com/api/tasks/${task.id}/`, task)
   }
   
   // delete button
   const deleteTask = async (id) => {
-    await axios.delete(`/api/tasks/${id}/`)
+    await axios.delete(`https://todo-backend-4ycu.onrender.com/api/tasks/${id}/`)
     tasks.value = tasks.value.filter(task => task.id !== id)
   }
 
