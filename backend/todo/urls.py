@@ -7,6 +7,7 @@ router.register(r"tasks", TaskViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("ping/", test_api),  # nový testovací endpoint
 ]
 
 

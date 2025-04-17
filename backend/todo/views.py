@@ -16,3 +16,10 @@ class TaskViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         print("📤 POST data:", request.data)
         return super().create(request, *args, **kwargs)
+    
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(["GET"])
+def test_api(request):
+    return Response({"message": "API is working!"})
