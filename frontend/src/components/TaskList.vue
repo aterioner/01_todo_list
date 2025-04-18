@@ -56,46 +56,64 @@
     </div>
   </template>
   
-  <script setup>
-  import { ref, onMounted } from 'vue'
-  import axios from 'axios'
-  
-  const tasks = ref([])
-  const newTaskTitle = ref('')
-  // const API = 'https://todo-backend-4ycu.onrender.com'
-  
-  // Načtení úkolů při načtení komponenty
-  onMounted(async () => {
-    const response = await axios.get('https://todo-backend-4ycu.onrender.com/api/tasks/')
-    tasks.value = response.data
-  })
-  
-  // Přidání nového úkolu
-  const addTask = async () => {
-    const trimmed = newTaskTitle.value.trim()
-    if (!trimmed) return
-  
-    const response = await axios.post('https://todo-backend-4ycu.onrender.com/api/tasks/', {
-      title: trimmed,
-      completed: false,
-    })
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const tasks = ref([])
+const newTaskTitle = ref('')
+const API = 'https://todo-backend-4ycu.onrender.com'
+
+// Načtení úkolů při načtení komponenty
+onMounted(async () => {
+  const response = await axios.get(`${API}/api/tasks/`)
+  tasks.value = response.data
+})
+
+// Přidání nového úkolu s ošetřením chyby
+const addTask = async () => {
+  const trimmed = newTaskTitle.value.trim()
+  if (!trimmed) return
+
+  try {
+    const response = await axios.post(
+      `${API}/api/tasks/`,
+      {
+        title: trimmed,
+        completed: false,
+      },
+    )
     tasks.value.unshift(response.data)
     newTaskTitle.value = ''
+  } catch (error) {
+    console.error('CHYBA PŘI POSTU:', error.response?.data || error.message)
   }
-  
-  // Aktualizace úkolu (např. checkbox)
-  const updateTask = async (task) => {
-    await axios.put(`https://todo-backend-4ycu.onrender.com/api/tasks/${task.id}/`, task)
-  }
-  
-  // delete button
-  const deleteTask = async (id) => {
-    await axios.delete(`https://todo-backend-4ycu.onrender.com/api/tasks/${id}/`)
-    tasks.value = tasks.value.filter(task => task.id !== id)
-  }
+}
 
-  // date format
-  const formatDate = (isoString) => {
+// Aktualizace úkolu (např. checkbox)
+const updateTask = async (task) => {
+  try {
+    await axios.put(
+      `${API}/api/tasks/${task.id}/`,
+      task,
+    )
+  } catch (error) {
+    console.error('CHYBA PŘI UPDATE:', error.response?.data || error.message)
+  }
+}
+
+// Smazání úkolu
+const deleteTask = async (id) => {
+  try {
+    await axios.delete(`${API}/api/tasks/${id}/`)
+    tasks.value = tasks.value.filter(task => task.id !== id)
+  } catch (error) {
+    console.error('CHYBA PŘI DELETE:', error.response?.data || error.message)
+  }
+}
+
+// Formátování data
+const formatDate = (isoString) => {
   const date = new Date(isoString)
   return date.toLocaleString('cs-CZ', {
     day: '2-digit',
@@ -105,5 +123,4 @@
     minute: '2-digit',
   })
 }
-
-  </script>
+</script>
